@@ -25,13 +25,14 @@ public class BookDao {
     public static final String SQL_SEARCH_NAME_BY_CHAR = "SELECT * FROM books WHERE book_name LIKE ?";
     public static final String SQL_SEARCH_AUTHOR_BY_CHAR = "SELECT * FROM books WHERE book_author LIKE ?";
     public static final String SQL_SEARCH_PUBLISHER_BY_CHAR = "SELECT * FROM books WHERE book_publisher LIKE ?";
-    public static final String SQL_SEARCH_TYPE_BY_CHAR  = "SELECT * FROM books WHERE book_type LIKE ?";
+    public static final String SQL_SEARCH_TYPE_BY_CHAR = "SELECT * FROM books WHERE book_type LIKE ?";
     public static final String SQL_SHOW_ALL_BOOKS = "SELECT * FROM books";
     public static final String SQL_BORROW_BOOKS = "UPDATE books SET book_status = 'borrowed' WHERE book_name = ?";
 
     public static final String SQL_INSERT_BORROW_RECORD = "INSERT INTO borrow_records (student_id, book_name, borrow_date) VALUES (?, ?, ?)";
 
     public static final String SQL_RETURN_BOOK = "UPDATE books SET book_status = 'available' WHERE book_name = ?";
+    public static final String SQL_GET_ALL_BORROW = "SELECT book_name FROM borrow_records WHERE student_id = ?";
 
     public void createBooks(Books books) {
         try {
@@ -55,16 +56,15 @@ public class BookDao {
         }
     }
 
-
-    public List<Books> searchByNameBook(String name){
+    public List<Books> searchByNameBook(String name) {
         List<Books> result = new ArrayList<>();
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SEARCH_NAME_BY_CHAR);
-            preparedStatement.setString(1,"%" + name + "%");
+            preparedStatement.setString(1, "%" + name + "%");
             ResultSet rs = preparedStatement.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 String bookName = rs.getString("book_name");
                 String bookAuthor = rs.getString("book_author");
                 double bookPrice = rs.getDouble("book_price");
@@ -73,7 +73,8 @@ public class BookDao {
                 String bookPublisher = rs.getString("book_publisher");
                 String bookType = rs.getString("book_type");
 
-                Books book = new Books(bookName, bookAuthor, bookPrice, borrowDate, bookStatus, bookPublisher, bookType);
+                Books book = new Books(bookName, bookAuthor, bookPrice, borrowDate, bookStatus, bookPublisher,
+                        bookType);
                 result.add(book);
             }
 
@@ -83,16 +84,15 @@ public class BookDao {
         return result;
     }
 
-
-    public List<Books> searchByAuthor(String author){
+    public List<Books> searchByAuthor(String author) {
         List<Books> result = new ArrayList<>();
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SEARCH_AUTHOR_BY_CHAR);
-            preparedStatement.setString(1,"%" + author + "%");
+            preparedStatement.setString(1, "%" + author + "%");
             ResultSet rs = preparedStatement.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 String bookName = rs.getString("book_name");
                 String bookAuthor = rs.getString("book_author");
                 double bookPrice = rs.getDouble("book_price");
@@ -101,7 +101,8 @@ public class BookDao {
                 String bookPublisher = rs.getString("book_publisher");
                 String bookType = rs.getString("book_type");
 
-                Books book = new Books(bookName, bookAuthor, bookPrice, borrowDate, bookStatus, bookPublisher, bookType);
+                Books book = new Books(bookName, bookAuthor, bookPrice, borrowDate, bookStatus, bookPublisher,
+                        bookType);
                 result.add(book);
             }
 
@@ -111,15 +112,15 @@ public class BookDao {
         return result;
     }
 
-    public List<Books> searchByPublisher(String publisher){
+    public List<Books> searchByPublisher(String publisher) {
         List<Books> result = new ArrayList<>();
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SEARCH_PUBLISHER_BY_CHAR);
-            preparedStatement.setString(1,"%" + publisher + "%");
+            preparedStatement.setString(1, "%" + publisher + "%");
             ResultSet rs = preparedStatement.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 String bookName = rs.getString("book_name");
                 String bookAuthor = rs.getString("book_author");
                 double bookPrice = rs.getDouble("book_price");
@@ -128,7 +129,8 @@ public class BookDao {
                 String bookPublisher = rs.getString("book_publisher");
                 String bookType = rs.getString("book_type");
 
-                Books book = new Books(bookName, bookAuthor, bookPrice, borrowDate, bookStatus, bookPublisher, bookType);
+                Books book = new Books(bookName, bookAuthor, bookPrice, borrowDate, bookStatus, bookPublisher,
+                        bookType);
                 result.add(book);
             }
 
@@ -138,15 +140,15 @@ public class BookDao {
         return result;
     }
 
-    public List<Books> searchByType(String type){
+    public List<Books> searchByType(String type) {
         List<Books> result = new ArrayList<>();
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SEARCH_TYPE_BY_CHAR);
-            preparedStatement.setString(1,"%" + type + "%");
+            preparedStatement.setString(1, "%" + type + "%");
             ResultSet rs = preparedStatement.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 String bookName = rs.getString("book_name");
                 String bookAuthor = rs.getString("book_author");
                 double bookPrice = rs.getDouble("book_price");
@@ -155,7 +157,8 @@ public class BookDao {
                 String bookPublisher = rs.getString("book_publisher");
                 String bookType = rs.getString("book_type");
 
-                Books book = new Books(bookName, bookAuthor, bookPrice, borrowDate, bookStatus, bookPublisher, bookType);
+                Books book = new Books(bookName, bookAuthor, bookPrice, borrowDate, bookStatus, bookPublisher,
+                        bookType);
                 result.add(book);
             }
 
@@ -165,37 +168,30 @@ public class BookDao {
         return result;
     }
 
-    public List<String> showAllBooks() {
-        List<String> bookNames = new ArrayList<>();
+    public List<Books> showAllBooks() {
+        List<Books> booksList = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SHOW_ALL_BOOKS);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 String bookName = rs.getString("book_name");
-                bookNames.add(bookName); // Thêm tên sách vào danh sách bookNames
                 String bookAuthor = rs.getString("book_author");
                 double bookPrice = rs.getDouble("book_price");
                 java.sql.Date borrowDate = rs.getDate("borrow_date");
                 String bookStatus = rs.getString("book_status");
                 String bookPublisher = rs.getString("book_publisher");
                 String bookType = rs.getString("book_type");
-
-                System.out.println("Book Name: " + bookName);
-                System.out.println("Author: " + bookAuthor);
-                System.out.println("Price: " + bookPrice);
-                System.out.println("Borrow Date: " + borrowDate);
-                System.out.println("Status: " + bookStatus);
-                System.out.println("Publisher: " + bookPublisher);
-                System.out.println("Type: " + bookType);
-                System.out.println("----------------------------------------");
+                Books book = new Books(bookName, bookAuthor, bookPrice, borrowDate, bookStatus, bookPublisher,
+                        bookType);
+                booksList.add(book);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return bookNames; // Trả về danh sách các tên sách
+        return booksList; // Trả về danh sách các đối tượng Books
     }
 
-    public void borrowBook(int studentId, String bookName){
+    public void borrowBook(int studentId, String bookName) {
         try {
             // Cập nhật trạng thái của sách thành 'borrowed'
             PreparedStatement borrowStatement = conn.prepareStatement(SQL_BORROW_BOOKS);
@@ -219,8 +215,7 @@ public class BookDao {
     public List<String> getBorrowedBooks(int studentId) {
         List<String> borrowedBooks = new ArrayList<>();
         try {
-            String sql = "SELECT book_name FROM borrow_records WHERE student_id = ?";
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(SQL_GET_ALL_BORROW);
             preparedStatement.setInt(1, studentId);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
@@ -232,9 +227,6 @@ public class BookDao {
         }
         return borrowedBooks;
     }
-
-
-
 
     public void returnBook(String bookName, int studentId) {
         try {
@@ -261,13 +253,3 @@ public class BookDao {
     }
 
 }
-
-
-
-
-
-
-
-
-
-

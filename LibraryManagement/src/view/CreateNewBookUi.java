@@ -1,26 +1,28 @@
-package controller.booksController;
-
-import entity.Books;
-import model.BookDao;
+package view;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 
-public class CreateBooks {
-    private static final Scanner sc = new Scanner(System.in);
+import controller.booksController.CreateBooksController;
+import entity.Books;
+
+public class CreateNewBookUi {
+
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    public static void addBooks(){
+    public static final Scanner sc = new Scanner(System.in);
+
+    public void createNewBooks() {
 
         String specialCharacters = "[!@#$%^&*()_+=\\[\\]{};':\"\\\\|,.<>\\/?]";
         boolean hasSpecialCharacter;
-        String nameBook, authorBook, dateInput,publBook,typeBook,statusBook ;
+        String nameBook, authorBook, dateInput, publBook, typeBook, statusBook;
         Double priceInput;
 
         try {
 
-            //===============================================
+            // ===============================================
             do {
                 System.out.println("Enter name book: ");
                 nameBook = sc.nextLine();
@@ -32,23 +34,22 @@ public class CreateBooks {
                 }
             } while (hasSpecialCharacter);
 
-            //===============================================
+            // ===============================================
 
-            do{
+            do {
                 System.out.println("Enter author book: ");
                 authorBook = sc.nextLine();
 
                 hasSpecialCharacter = authorBook.matches(".*" + specialCharacters + ".*");
 
-                if(hasSpecialCharacter){
+                if (hasSpecialCharacter) {
                     System.out.println("Author book do not have charactor, please enter again");
                 }
-            }while (hasSpecialCharacter);
+            } while (hasSpecialCharacter);
 
             double price;
 
-
-            //===============================================
+            // ===============================================
 
             do {
                 System.out.println("Enter price of the book: ");
@@ -67,50 +68,43 @@ public class CreateBooks {
                 }
             } while (price <= 0);
 
-
-            //===============================================
+            // ===============================================
 
             Date borrowDate;
-            do{
+            do {
                 System.out.println("Enter date of book (YYYY-MM-DD): ");
                 dateInput = sc.nextLine();
-
 
                 try {
                     borrowDate = dateFormat.parse(dateInput);
 
-
-                }catch (java.text.ParseException e){
+                } catch (java.text.ParseException e) {
                     System.out.println("Invalid date format. Please enter date in format YYYY-MM-DD.");
                     borrowDate = null;
                 }
 
-            }while (borrowDate == null);
+            } while (borrowDate == null);
 
-            //===============================================
+            // ===============================================
 
             System.out.println("Enter stutus of book: ");
             statusBook = sc.nextLine();
-            //===============================================
+            // ===============================================
 
             System.out.println("Enter publisher book: ");
             publBook = sc.nextLine();
-            //===============================================
+            // ===============================================
 
             System.out.println("Enter type of book: ");
             typeBook = sc.nextLine();
 
-
             java.sql.Date sqlDate = new java.sql.Date(borrowDate.getTime());
             Books books = new Books(nameBook, authorBook, priceInput, sqlDate, statusBook, publBook, typeBook);
-            BookDao bookDao = new BookDao();
-            bookDao.createBooks(books);
+            CreateBooksController createBooks = new CreateBooksController();
+            createBooks.addBooks(books);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
 
-    public static void main(String[] args) {
-        addBooks();
+        }
     }
 }

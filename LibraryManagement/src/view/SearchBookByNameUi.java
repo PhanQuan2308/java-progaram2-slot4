@@ -1,29 +1,28 @@
-package controller.booksController;
-
-import entity.Books;
-import model.BookDao;
+package view;
 
 import java.util.List;
 import java.util.Scanner;
 
-public class SearchBookByName {
+import controller.booksController.SearchBookByNameController;
+import entity.Books;
+
+public class SearchBookByNameUi {
     private static final Scanner sc = new Scanner(System.in);
 
-    public static void searchBookName(){
+    public void searchByName() {
         try {
             System.out.println("Enter name book to search: ");
             String nameBook = sc.nextLine();
+            SearchBookByNameController controller = new SearchBookByNameController(); 
+            List<Books> books = controller.searchBookNameController(nameBook);
 
-            BookDao bookDao = new BookDao();
-            List<Books> result = bookDao.searchByNameBook(nameBook);
-
-            if(result.isEmpty()){
+            if (books.isEmpty()) {
                 System.out.println("No book found with name.");
-            }else {
+            } else {
                 System.out.println("===============================");
 
                 System.out.println("Information book is: ");
-                for (Books book : result) {
+                for (Books book : books) {
                     System.out.println(" Title: " + book.getBook_name() +
                             "\n Author: " + book.getBook_author() +
                             "\n Price: " + book.getBook_price() +
@@ -39,7 +38,4 @@ public class SearchBookByName {
         }
     }
 
-    public static void main(String[] args) {
-        searchBookName();
-    }
 }
